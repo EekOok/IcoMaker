@@ -6,54 +6,59 @@ from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PySide6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.monlayout = QVBoxLayout()
-        self.ligne1 = QHBoxLayout()
-        self.monlayout.addLayout(self.ligne1)
 
-        self.lbl_source = QLabel("Selectionner l'image source")
-        self.ligne1.addWidget(self.lbl_source)
+        self.setWindowTitle("IcoMaker")
 
-        self.buttonGetSource = QPushButton("...")
-        self.buttonGetSource.clicked.connect(self.selectsource)
-        self.ligne1.addWidget(self.buttonGetSource)
+        self.mylayout = QVBoxLayout()
+        self.line1 = QHBoxLayout()
+        self.mylayout.addLayout(self.line1)
 
-        self.ligne2 = QHBoxLayout()
-        self.monlayout.addLayout(self.ligne2)
+        self.lbl_img = QLabel("Selectionner l'image source")
+        self.line1.addWidget(self.lbl_img)
 
-        self.buttonvalide = QPushButton("Générer icone")
-        self.buttonvalide.clicked.connect(self.generico)
-        self.monlayout.addWidget(self.buttonvalide)
+        self.button_get_img = QPushButton("...")
+        self.button_get_img.clicked.connect(self.selectimg)
+        self.line1.addWidget(self.button_get_img)
+
+        self.line2 = QHBoxLayout()
+        self.mylayout.addLayout(self.line2)
+
+        self.button_create = QPushButton("Générer icone")
+        self.button_create.clicked.connect(self.createico)
+        self.mylayout.addWidget(self.button_create)
 
         self.container = QWidget()
-        self.container.setLayout(self.monlayout)
+        self.container.setLayout(self.mylayout)
         self.setCentralWidget(self.container)
 
         self.format = [(64, 64)]
-        self.complet = ""
-        self.fichext = []
+        self.path_n_file = ""
+        self.file_extension = []
 
-    def selectsource(self):
+    def selectimg(self):
+
         dialog = QFileDialog(self)
         dialog.setNameFilter(QObject().tr("Images (*.png *.jpg)"))
 
         if dialog.exec():
-            chemin = str(dialog.directory().path())
-            self.complet = str(dialog.selectedFiles()[0])
-            fichier = self.complet[len(chemin)+1:]
-            self.fichext = fichier.split('.')
+            path = str(dialog.directory().path())
+            self.path_n_file = str(dialog.selectedFiles()[0])
+            file = self.path_n_file[len(path)+1:]
+            self.file_extension = file.split('.')
 
-    def generico(self):
-        img = Image.open(self.complet)
+    def createico(self):
+        img = Image.open(self.path_n_file)
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.Directory)
 
         if dialog.exec():
             chemin = str(dialog.directory().path())
 
-            img.save(chemin+"/"+self.fichext[0]+'_ico.ico', sizes=self.format)
+            img.save(chemin+"/"+self.file_extension[0]+'_ico.ico', sizes=self.format)
 
 
 if __name__ == "__main__":
